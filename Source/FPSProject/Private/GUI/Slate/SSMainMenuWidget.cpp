@@ -1,12 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GUI/Slate/SSettingsWidget.h"
+#include "GUI/Slate/SSMainMenuWidget.h"
 #include "SlateOptMacros.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
-void SSettingsWidget::Construct(const FArguments& InArgs)
+void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
+
+
+
 	bCanSupportFocus = true;
 	OwningHUD = InArgs._OwningHUD;
 
@@ -14,9 +17,9 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	const FMargin ButtonPadding = FMargin(10.0f);
 
 	// Text within the menus
-	const FText TitleText = FText::FromString("Settings Menu");
-	const FText ResumeText = FText::FromString("Resume");
-	const FText SoundText = FText::FromString("Sound");
+	const FText TitleText = FText::FromString("Hitman's Creed");
+	const FText PlayText = FText::FromString("Play");
+	const FText SettingsText = FText::FromString("Settings");
 	const FText QuitText = FText::FromString("Quit");
 
 	FSlateFontInfo TitleTextStyle = FCoreStyle::Get().GetFontStyle("EmbassedText");
@@ -55,11 +58,11 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 						.Padding(ButtonPadding)
 						[
 							SNew(SButton)
-								.OnClicked(this, &SSettingsWidget::OnResumeClicked)
+								.OnClicked(this, &SMainMenuWidget::OnPlayClicked)
 								[
 									SNew(STextBlock)
 										.Font(ButtonTextStyle)
-										.Text(ResumeText)
+										.Text(PlayText)
 										.Justification(ETextJustify::Center)
 								]
 						]
@@ -68,11 +71,11 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 						.Padding(ButtonPadding)
 						[
 							SNew(SButton)
-								.OnClicked(this, &SSettingsWidget::OnSoundClicked)
+								.OnClicked(this, &SMainMenuWidget::OnSettingsClicked)
 								[
 									SNew(STextBlock)
 										.Font(ButtonTextStyle)
-										.Text(SoundText)
+										.Text(SettingsText)
 										.Justification(ETextJustify::Center)
 								]
 						]
@@ -81,7 +84,7 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 						.Padding(ButtonPadding)
 						[
 							SNew(SButton)
-								.OnClicked(this, &SSettingsWidget::OnQuitClicked)
+								.OnClicked(this, &SMainMenuWidget::OnQuitClicked)
 								[
 									SNew(STextBlock)
 										.Font(ButtonTextStyle)
@@ -93,21 +96,29 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 		];
 }
 
-FReply SSettingsWidget::OnResumeClicked() const
+
+
+
+
+FReply SMainMenuWidget::OnPlayClicked() const
 {
 	if (OwningHUD.IsValid()) 
 	{
-		OwningHUD->RemoveSettingsMenu();
+		OwningHUD->RemoveMainMenu();
+
+		OwningHUD->ShowGameMenu(OwningHUD->startingGameWidget);
 	}
 	return FReply::Handled();
 }
-FReply SSettingsWidget::OnSoundClicked() const
+
+FReply SMainMenuWidget::OnSettingsClicked() const
 {
 	return FReply::Handled();
 }
-FReply SSettingsWidget::OnQuitClicked() const
+
+FReply SMainMenuWidget::OnQuitClicked() const
 {
-	if (OwningHUD.IsValid()) 
+	if (OwningHUD.IsValid())
 	{
 		if (APlayerController* PC = OwningHUD->PlayerOwner) {
 			PC->ConsoleCommand("quit");
@@ -115,5 +126,8 @@ FReply SSettingsWidget::OnQuitClicked() const
 	}
 	return FReply::Handled();
 }
+
+
+
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

@@ -8,9 +8,15 @@ void AFPSHUD::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ShowGameMenu(startingGameWidget);
-	ShowSettingsMenu();
+	
+	ShowMainMenu();
+
+	//ShowGameMenu(startingGameWidget);
+
+	//ShowSettingsMenu();
 }
+
+
 
 void AFPSHUD::DrawHUD()
 {
@@ -32,6 +38,41 @@ void AFPSHUD::DrawHUD()
 	Canvas->DrawItem(TileItem);
 }
 
+
+
+// MAIN MENU
+void AFPSHUD::ShowMainMenu()
+{
+	if (GEngine && GEngine->GameViewport)
+	{
+		mainMenuWidget = SNew(SMainMenuWidget).OwningHUD(this);
+		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(mainMenuWidgetContainer, SWeakWidget).PossiblyNullContent(mainMenuWidget.ToSharedRef()));
+	
+		if (PlayerOwner)
+		{
+			PlayerOwner->bShowMouseCursor = true;
+			PlayerOwner->SetInputMode(FInputModeUIOnly());
+		}
+	
+	}
+}
+
+void AFPSHUD::RemoveMainMenu()
+{
+	if (GEngine && GEngine->GameViewport && mainMenuWidgetContainer.IsValid())
+	{
+		GEngine->GameViewport->RemoveViewportWidgetContent(mainMenuWidgetContainer.ToSharedRef());
+
+		if (PlayerOwner)
+		{
+			PlayerOwner->bShowMouseCursor = false;
+			PlayerOwner->SetInputMode(FInputModeGameOnly());
+		}
+	}
+}
+
+
+// SETTINGS MENU
 void AFPSHUD::ShowSettingsMenu()
 {
 	if (GEngine && GEngine->GameViewport)

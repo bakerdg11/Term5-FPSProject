@@ -24,8 +24,13 @@ public:
 	virtual void DrawHUD() override;
 
 	// 2. Slates method of making UI
+	TSharedPtr<class SMainMenuWidget> mainMenuWidget;
+	TSharedPtr<class SWidget> mainMenuWidgetContainer;
 	TSharedPtr<class SSettingsWidget> settingsWidget;
 	TSharedPtr<class SWidget> settingsWidgetContainer;
+
+	void ShowMainMenu();
+	void RemoveMainMenu();
 
 	void ShowSettingsMenu();
 	void RemoveSettingsMenu();
@@ -42,4 +47,5 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly) // Uproperty allows you to not have to delete pointers once they are removed
 	UTexture2D* CrosshairTexture;
+
 };

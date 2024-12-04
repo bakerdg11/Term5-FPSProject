@@ -3,6 +3,7 @@
 
 #include "Player/FPSCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "HUD/FPSHUD.h"
 
 
 // Sets default values
@@ -46,6 +47,7 @@ void AFPSCharacter::BeginPlay() // Only called when the game begins, not when ed
 	bHasWeapon = false;
 
 }
+
 
 // Called every frame
 void AFPSCharacter::Tick(float DeltaTime)
@@ -110,7 +112,6 @@ void AFPSCharacter::PickupWeapon()
 	bHasWeapon = true;
 	UE_LOG(LogTemp, Warning, TEXT("Weapon Picked Up"));
 
-	// Spawn the BP_WeaponPickup actor
 	UWorld* World = GetWorld();
 	if (World)
 	{
@@ -118,7 +119,6 @@ void AFPSCharacter::PickupWeapon()
 		SpawnParams.Owner = this;
 		SpawnParams.Instigator = GetInstigator();
 
-		// Ensure you set the correct Blueprint class in the editor or constructor
 		TSubclassOf<AWeaponPickup> WeaponClass = LoadClass<AWeaponPickup>(nullptr, TEXT("/Game/Blueprint/Pickup/BP_WeaponPickup.BP_WeaponPickup_C"));
 		if (WeaponClass)
 		{
@@ -128,10 +128,8 @@ void AFPSCharacter::PickupWeapon()
 			AttachedWeapon = World->SpawnActor<AWeaponPickup>(WeaponClass, SpawnLocation, SpawnRotation, SpawnParams);
 			if (AttachedWeapon)
 			{
-				// Attach to the camera directly if no skeletal mesh is available
 				AttachedWeapon->AttachToComponent(FPSCameraComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
-				// Adjust the weapon's position relative to the camera
 				AttachedWeapon->SetActorRelativeLocation(FVector(50.0f, 10.0f, -20.0f));
 				AttachedWeapon->SetActorRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 				UE_LOG(LogTemp, Warning, TEXT("Weapon Spawned at Location: %s"), *SpawnLocation.ToString());
@@ -183,7 +181,7 @@ void AFPSCharacter::StartCrouch()
 {
 	Crouch();
 
-	// Adjust crouched walk speed
+	// Change speed
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f; // Example speed
@@ -200,13 +198,13 @@ void AFPSCharacter::StopCrouch()
 {
 	UnCrouch();
 
-	// Restore regular walk speed
+	// Change speed back
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // Example speed
 	}
 
-	// Restore camera position when standing
+	// Camera position back to regular
 	if (FPSCameraComponent)
 	{
 		FPSCameraComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f + BaseEyeHeight));
