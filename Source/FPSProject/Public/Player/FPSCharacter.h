@@ -10,6 +10,7 @@
 #include "FPSProjectile.h"
 #include "Pickups/WeaponPickup.h"
 #include "Kismet/GameplayStatics.h"
+#include "HUD/FPSHUD.h"
 #include "FPSCharacter.generated.h"
 
 UCLASS()
@@ -76,14 +77,15 @@ public:
 	UFUNCTION()
 	void StopCrouch();
 
-
-
-	/*
 	UFUNCTION()
 	void Damage(float damageAmt);
+	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	*/
+
+private:
+	float Health = 100;
+	const float MaxHealth = 100;
+
 
 
 };

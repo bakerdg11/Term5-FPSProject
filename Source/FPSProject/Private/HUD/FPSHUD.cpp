@@ -103,6 +103,7 @@ void AFPSHUD::RemoveSettingsMenu()
 	}
 }
 
+// HUD
 void AFPSHUD::ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget)
 {
 	if (gameWidgetContainer)

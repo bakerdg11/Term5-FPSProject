@@ -31,6 +31,7 @@ AFPSCharacter::AFPSCharacter() //Constructor: Gets called when game starts for t
 	GetMesh()->SetOwnerNoSee(true);
 
 
+
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +39,8 @@ void AFPSCharacter::BeginPlay() // Only called when the game begins, not when ed
 {
 	Super::BeginPlay();
 	
+	Health = MaxHealth;
+
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
@@ -45,6 +48,8 @@ void AFPSCharacter::BeginPlay() // Only called when the game begins, not when ed
 	}
 
 	bHasWeapon = false;
+
+
 
 }
 
@@ -175,7 +180,11 @@ void AFPSCharacter::Fire()
 
 	FVector LaunchDirection = MuzzleRotation.Vector();
 	Projectile->FireInDirection(LaunchDirection);
+
+	Damage(10);
 }
+
+
 
 void AFPSCharacter::StartCrouch()
 {
@@ -211,13 +220,21 @@ void AFPSCharacter::StopCrouch()
 	}
 }
 
+void AFPSCharacter::Damage(float damageAmt)
+{
+	// Minus health from UI
+	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+	if (!HUD) return;
+
+	Health -= damageAmt;
+	float HealthPercent = Health / MaxHealth;
+
+	HUD->gameWidgetContainer->SetHealthBar(HealthPercent);
+}
+
 
 
 /*
-void AFPSCharacter::Damage(float damageAmt)
-{
-}
-
 float AFPSCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
