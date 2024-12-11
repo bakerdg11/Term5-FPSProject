@@ -13,6 +13,8 @@
 #include "HUD/FPSHUD.h"
 #include "FPSCharacter.generated.h"
 
+class AEnemyAIController;
+
 UCLASS()
 class FPSPROJECT_API AFPSCharacter : public ACharacter
 {
@@ -22,10 +24,16 @@ public:
 	// Sets default values for this character's properties
 	AFPSCharacter();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
+
+private: 
+	// Stealth kill range
+	UPROPERTY(EditAnywhere, Category = "Stealth Kill")
+	float StealthKillRange = 200.0f;
+
+	// Stealth kill dot product threshold (-1.0 = directly behind, 0 = perpendicular)
+	UPROPERTY(EditAnywhere, Category = "Stealth Kill")
+	float StealthKillDotThreshold = 0.0f;
 
 
 public:	
@@ -72,6 +80,9 @@ public:
 	void Fire();
 
 	UFUNCTION()
+	void StealthKill();
+
+	UFUNCTION()
 	void StartCrouch();
 
 	UFUNCTION()
@@ -85,6 +96,17 @@ public:
 private:
 	float Health = 100;
 	const float MaxHealth = 100;
+
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	void AttemptStealthKill();
+
+	AEnemyAIController* GetValidEnemyForStealthKill() const;
+
+	void DebugStealthKill(FVector EnemyLocation, FVector PlayerLocation, bool IsBehind, bool IsClose);
 
 
 

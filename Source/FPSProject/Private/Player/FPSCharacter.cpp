@@ -2,7 +2,11 @@
 
 
 #include "Player/FPSCharacter.h"
+#include "EngineUtils.h"  // For TActorIterator
+#include "Enemy/EnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
 #include "HUD/FPSHUD.h"
 
 
@@ -54,6 +58,8 @@ void AFPSCharacter::BeginPlay() // Only called when the game begins, not when ed
 }
 
 
+
+
 // Called every frame
 void AFPSCharacter::Tick(float DeltaTime)
 {
@@ -80,6 +86,9 @@ void AFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 
 	// Fire Weapon
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFPSCharacter::Fire);
+
+	// Stealth Kill
+	PlayerInputComponent->BindAction("StealthKill", IE_Pressed, this, &AFPSCharacter::StealthKill);
 
 	// Crouch
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AFPSCharacter::StartCrouch);
@@ -184,6 +193,11 @@ void AFPSCharacter::Fire()
 	Damage(10);
 }
 
+void AFPSCharacter::StealthKill()
+{
+	AttemptStealthKill();
+}
+
 
 
 void AFPSCharacter::StartCrouch()
@@ -230,6 +244,116 @@ void AFPSCharacter::Damage(float damageAmt)
 	float HealthPercent = Health / MaxHealth;
 
 	HUD->gameWidgetContainer->SetHealthBar(HealthPercent);
+}
+
+
+
+
+// Stealth Kills
+void AFPSCharacter::AttemptStealthKill()
+{
+	// Find a valid enemy for the stealth kill
+	AEnemyAIController* EnemyAI = GetValidEnemyForStealthKill();
+	if (!EnemyAI)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No valid enemy for stealth kill!"));
+		return;
+	}
+
+	ACharacter* EnemyCharacter = Cast<ACharacter>(EnemyAI->GetPawn());
+	if (!EnemyCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy AI doesn't have a valid character pawn!"));
+		return;
+	}
+
+	// Stealth kill logic (e.g., reduce health or destroy enemy)
+	UE_LOG(LogTemp, Log, TEXT("Stealth kill executed on %s!"), *EnemyCharacter->GetName());
+
+	// Example: Instant death
+	EnemyCharacter->Destroy();
+
+	// Optionally add stealth kill animations or effects here
+}
+
+AEnemyAIController* AFPSCharacter::GetValidEnemyForStealthKill() const
+{
+	FVector PlayerLocation = GetActorLocation();
+	FVector PlayerForward = GetActorForwardVector();
+
+	for (TActorIterator<AEnemyAIController> It(GetWorld()); It; ++It)
+	{
+		AEnemyAIController* EnemyAI = *It;
+		if (!EnemyAI) continue;
+
+		ACharacter* EnemyCharacter = Cast<ACharacter>(EnemyAI->GetPawn());
+		if (!EnemyCharacter) continue;
+
+		// Check if the enemy sees the player
+		if (EnemyAI->bCanSeePlayer) continue;
+
+		FVector EnemyLocation = EnemyCharacter->GetActorLocation();
+		FVector ToEnemy = (EnemyLocation - PlayerLocation).GetSafeNormal();
+
+		// Check if enemy is within stealth kill range
+		float DistanceToEnemy = FVector::Dist(PlayerLocation, EnemyLocation);
+		if (DistanceToEnemy > StealthKillRange) continue;
+
+		// Check if enemy is behind the player
+		float DotProduct = FVector::DotProduct(PlayerForward, ToEnemy);
+		if (DotProduct > 0.0f) continue;
+
+		// Raycast to ensure no obstacles
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			PlayerLocation,
+			EnemyLocation,
+			ECC_Visibility,
+			QueryParams
+		);
+
+		if (bHit && HitResult.GetActor() != EnemyCharacter) continue;
+
+		// Reverse Raycast to check enemy visibility
+		FHitResult EnemyToPlayerHitResult;
+		FCollisionQueryParams EnemyToPlayerQueryParams;
+		EnemyToPlayerQueryParams.AddIgnoredActor(EnemyCharacter);
+		EnemyToPlayerQueryParams.AddIgnoredActor(this);
+
+		bool bEnemyCanSeePlayer = GetWorld()->LineTraceSingleByChannel(
+			EnemyToPlayerHitResult,
+			EnemyLocation,
+			PlayerLocation,
+			ECC_Visibility,
+			EnemyToPlayerQueryParams
+		);
+
+		if (bEnemyCanSeePlayer && EnemyToPlayerHitResult.GetActor() == this)
+		{
+			continue; // Enemy can see the player
+		}
+
+		// Found a valid enemy
+		return EnemyAI;
+	}
+
+	// No valid enemy found
+	return nullptr;
+}
+
+void AFPSCharacter::DebugStealthKill(FVector EnemyLocation, FVector PlayerLocation, bool IsBehind, bool IsClose)
+{
+	FColor LineColor = (IsBehind && IsClose) ? FColor::Green : FColor::Red;
+	DrawDebugLine(GetWorld(), PlayerLocation, EnemyLocation, LineColor, false, 2.0f);
+
+	FString DebugText = FString::Printf(TEXT("IsBehind: %s, IsClose: %s"),
+		IsBehind ? TEXT("True") : TEXT("False"),
+		IsClose ? TEXT("True") : TEXT("False"));
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, DebugText);
 }
 
 

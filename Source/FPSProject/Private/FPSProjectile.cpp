@@ -13,9 +13,10 @@ AFPSProjectile::AFPSProjectile()
 	if (!CollisionComponent)
 	{
 		CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SpereComponent"));
-		CollisionComponent->InitSphereRadius(5.0f);
+		CollisionComponent->InitSphereRadius(15.0f);
         CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
         CollisionComponent->OnComponentHit.AddDynamic(this, &AFPSProjectile::OnWhateverYouWantToNameIt);
+        CollisionComponent->OnComponentHit.AddDynamic(this, &AFPSProjectile::OnHitEnemy);
 		RootComponent = CollisionComponent;
 	}
 
@@ -90,6 +91,20 @@ void AFPSProjectile::OnWhateverYouWantToNameIt(UPrimitiveComponent* HitComponent
     {
         OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
         Destroy();
+    }
+}
+
+void AFPSProjectile::OnHitEnemy(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (OtherActor != this)
+    {
+        // Check if the OtherActor is an enemy
+        if (AEnemyAICharacter* HitEnemy = Cast<AEnemyAICharacter>(OtherActor))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Projectile hit enemy"));
+            HitEnemy->Destroy(); // Destroy the enemy
+            Destroy(); // Destroy the projectile
+        }
     }
 }
 
