@@ -252,35 +252,9 @@ void AFPSCharacter::Damage(float damageAmt)
 // Stealth Kills
 void AFPSCharacter::AttemptStealthKill()
 {
-	// Find a valid enemy for the stealth kill
-	AEnemyAIController* EnemyAI = GetValidEnemyForStealthKill();
-	if (!EnemyAI)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No valid enemy for stealth kill!"));
-		return;
-	}
-
-	ACharacter* EnemyCharacter = Cast<ACharacter>(EnemyAI->GetPawn());
-	if (!EnemyCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Enemy AI doesn't have a valid character pawn!"));
-		return;
-	}
-
-	// Stealth kill logic (e.g., reduce health or destroy enemy)
-	UE_LOG(LogTemp, Log, TEXT("Stealth kill executed on %s!"), *EnemyCharacter->GetName());
-
-	// Example: Instant death
-	EnemyCharacter->Destroy();
-
-	// Optionally add stealth kill animations or effects here
-}
-
-AEnemyAIController* AFPSCharacter::GetValidEnemyForStealthKill() const
-{
 	FVector PlayerLocation = GetActorLocation();
-	FVector PlayerForward = GetActorForwardVector();
 
+	// Find all enemy AI controllers within stealth kill range
 	for (TActorIterator<AEnemyAIController> It(GetWorld()); It; ++It)
 	{
 		AEnemyAIController* EnemyAI = *It;
@@ -289,72 +263,31 @@ AEnemyAIController* AFPSCharacter::GetValidEnemyForStealthKill() const
 		ACharacter* EnemyCharacter = Cast<ACharacter>(EnemyAI->GetPawn());
 		if (!EnemyCharacter) continue;
 
-		// Check if the enemy sees the player
-		if (EnemyAI->bCanSeePlayer) continue;
-
 		FVector EnemyLocation = EnemyCharacter->GetActorLocation();
-		FVector ToEnemy = (EnemyLocation - PlayerLocation).GetSafeNormal();
+		float DistanceToEnemy = FVector::Dist(PlayerLocation, EnemyLocation);
 
 		// Check if enemy is within stealth kill range
-		float DistanceToEnemy = FVector::Dist(PlayerLocation, EnemyLocation);
 		if (DistanceToEnemy > StealthKillRange) continue;
 
-		// Check if enemy is behind the player
-		float DotProduct = FVector::DotProduct(PlayerForward, ToEnemy);
-		if (DotProduct > 0.0f) continue;
-
-		// Raycast to ensure no obstacles
-		FHitResult HitResult;
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(this);
-
-		bool bHit = GetWorld()->LineTraceSingleByChannel(
-			HitResult,
-			PlayerLocation,
-			EnemyLocation,
-			ECC_Visibility,
-			QueryParams
-		);
-
-		if (bHit && HitResult.GetActor() != EnemyCharacter) continue;
-
-		// Reverse Raycast to check enemy visibility
-		FHitResult EnemyToPlayerHitResult;
-		FCollisionQueryParams EnemyToPlayerQueryParams;
-		EnemyToPlayerQueryParams.AddIgnoredActor(EnemyCharacter);
-		EnemyToPlayerQueryParams.AddIgnoredActor(this);
-
-		bool bEnemyCanSeePlayer = GetWorld()->LineTraceSingleByChannel(
-			EnemyToPlayerHitResult,
-			EnemyLocation,
-			PlayerLocation,
-			ECC_Visibility,
-			EnemyToPlayerQueryParams
-		);
-
-		if (bEnemyCanSeePlayer && EnemyToPlayerHitResult.GetActor() == this)
+		// Check the blackboard to see if the enemy can see the player
+		UBlackboardComponent* Blackboard = EnemyAI->GetBlackboardComponent();
+		if (Blackboard && Blackboard->GetValueAsBool(FName("Can See Player")))
 		{
-			continue; // Enemy can see the player
+			UE_LOG(LogTemp, Warning, TEXT("%s sees the player. Stealth kill not possible."), *EnemyCharacter->GetName());
+			continue;
 		}
 
-		// Found a valid enemy
-		return EnemyAI;
+		// Perform the stealth kill
+		UE_LOG(LogTemp, Warning, TEXT("Stealth kill executed on %s!"), *EnemyCharacter->GetName());
+		EnemyCharacter->Destroy();
+
+		// Optionally, break after killing one enemy
+		break;
 	}
-
-	// No valid enemy found
-	return nullptr;
 }
 
-void AFPSCharacter::DebugStealthKill(FVector EnemyLocation, FVector PlayerLocation, bool IsBehind, bool IsClose)
-{
-	FColor LineColor = (IsBehind && IsClose) ? FColor::Green : FColor::Red;
-	DrawDebugLine(GetWorld(), PlayerLocation, EnemyLocation, LineColor, false, 2.0f);
 
-	FString DebugText = FString::Printf(TEXT("IsBehind: %s, IsClose: %s"),
-		IsBehind ? TEXT("True") : TEXT("False"),
-		IsClose ? TEXT("True") : TEXT("False"));
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, DebugText);
-}
+
 
 
 

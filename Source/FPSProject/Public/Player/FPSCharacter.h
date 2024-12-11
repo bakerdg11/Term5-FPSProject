@@ -24,7 +24,9 @@ public:
 	// Sets default values for this character's properties
 	AFPSCharacter();
 
-
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private: 
 	// Stealth kill range
@@ -98,10 +100,8 @@ private:
 	const float MaxHealth = 100;
 
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
+protected:
 	void AttemptStealthKill();
 
 	AEnemyAIController* GetValidEnemyForStealthKill() const;
