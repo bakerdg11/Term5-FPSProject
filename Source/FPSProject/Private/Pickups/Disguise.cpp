@@ -39,16 +39,24 @@ void ADisguise::OnCollect()
 
 	UE_LOG(LogTemp, Warning, TEXT("Disguise Collect Called"));
 
-	// Access the HUD and update the disguise text
-	if (AFPSHUD* HUD = Cast<AFPSHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
+	// Access the player character
+	if (AFPSCharacter* Player = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
 	{
-		UFPSUserWidget* UserWidget = HUD->GetUserWidget();
-		if (UserWidget && UserWidget->DisguisedText)
+		// Set the player as disguised
+		Player->SetDisguised(true);
+
+		// Access the HUD and update the disguise text
+		if (AFPSHUD* HUD = Cast<AFPSHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
 		{
-			UserWidget->DisguisedText->SetText(FText::FromString("Disguised: Yes"));
+			UFPSUserWidget* UserWidget = HUD->GetUserWidget();
+			if (UserWidget && UserWidget->DisguisedText)
+			{
+				UserWidget->SetDisguisedText(true);
+			}
 		}
 	}
 
+	// Destroy the disguise object
 	Destroy();
 }
 

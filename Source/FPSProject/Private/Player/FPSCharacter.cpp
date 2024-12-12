@@ -284,6 +284,16 @@ void AFPSCharacter::AttemptStealthKill()
 	}
 }
 
+bool AFPSCharacter::IsDisguised() const
+{
+	return bIsDisguised;
+}
+
+void AFPSCharacter::SetDisguised(bool bDisguised)
+{
+	bIsDisguised = bDisguised;
+}
+
 
 
 

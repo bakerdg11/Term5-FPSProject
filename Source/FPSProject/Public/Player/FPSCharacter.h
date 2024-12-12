@@ -106,6 +106,20 @@ private:
 protected:
 	void AttemptStealthKill();
 
+public:
+	// Returns whether the player is disguised
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	bool IsDisguised() const;
+
+	// Sets the disguised state
+	UFUNCTION(BlueprintCallable, Category = "PlayerState")
+	void SetDisguised(bool bDisguised);
+
+private:
+	// Tracks if the player is disguised
+	bool bIsDisguised = false;
+
+
 	/*
 	AEnemyAIController* GetValidEnemyForStealthKill() const;
 

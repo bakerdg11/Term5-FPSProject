@@ -28,11 +28,21 @@ void AEnemyAIController::BeginPlay()
 
 void AEnemyAIController::OnSeePawn(APawn* PlayerPawn)
 {
-	AFPSCharacter* player = Cast<AFPSCharacter>(PlayerPawn);
-	if (!player) return;
+	AFPSCharacter* Player = Cast<AFPSCharacter>(PlayerPawn);
+	if (!Player) return;
 
-	SetCanSeePlayer(true, player);
+	// Check if the player is disguised
+	if (Player->IsDisguised())
+	{
+		// Player is disguised; enemy should not see them
+		SetCanSeePlayer(false, nullptr);
+		return;
+	}
 
+	// Player is not disguised; enemy can see them
+	SetCanSeePlayer(true, Player);
+
+	// Start the timer for losing sight of the player
 	RunTriggerableTimer();
 }
 

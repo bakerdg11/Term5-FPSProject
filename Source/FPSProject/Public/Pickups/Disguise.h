@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Collectibles/Collectible.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/FPSCharacter.h"
 #include "HUD/FPSHUD.h"
 #include "GameFramework/Actor.h"
 #include "Disguise.generated.h"
