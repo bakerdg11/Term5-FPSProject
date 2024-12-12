@@ -27,16 +27,16 @@ public:
 	UProgressBar* HealthBar;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* KillsText;
+	UTextBlock* DisguisedText;
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* ButtonContainer;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UButtonWidget> ButtonWidgetPrefab;
+	UTextBlock* KillsText;
 
 	UFUNCTION()
 	void SetHealthBar(float percentage);
+
+	UFUNCTION()
+	void SetDisguisedText(bool bIsDisguised);
 
 	UFUNCTION()
 	void SetKillsText(int amount);

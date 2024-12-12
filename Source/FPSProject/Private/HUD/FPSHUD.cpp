@@ -118,3 +118,8 @@ void AFPSHUD::ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget)
 		gameWidgetContainer-> AddToViewport();
 	}
 }
+
+UFPSUserWidget* AFPSHUD::GetUserWidget() const
+{
+	return gameWidgetContainer;
+}

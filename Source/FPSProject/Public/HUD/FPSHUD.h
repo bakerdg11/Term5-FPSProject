@@ -43,6 +43,7 @@ public:
 	UFPSUserWidget* gameWidgetContainer;
 
 	void ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget);
+	UFPSUserWidget* GetUserWidget() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly) // Uproperty allows you to not have to delete pointers once they are removed

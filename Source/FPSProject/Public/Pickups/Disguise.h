@@ -6,43 +6,29 @@
 #include "Collectibles/Collectible.h"
 #include "Kismet/GameplayStatics.h"
 #include "HUD/FPSHUD.h"
-#include "Intel.generated.h"
-
+#include "GameFramework/Actor.h"
+#include "Disguise.generated.h"
 
 UCLASS()
-class FPSPROJECT_API AIntel : public ACollectible
+class FPSPROJECT_API ADisguise : public ACollectible
 {
 	GENERATED_BODY()
 	
-public:
+public:	
 	// Sets default values for this actor's properties
-	AIntel();
+	ADisguise();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
+public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void OnCollect() override;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* IntelMeshComponent;
-
-	UPROPERTY(EditAnywhere)
-	float Points = 1;
-
-	UPROPERTY(EditAnywhere)
-	float RotationRate = 100;
-
-	UPROPERTY(EditAnywhere)
-	float OnCollectRotationRate = 1500;
-
-	FTimerHandle DeathTimerHandle;
-	void DeathTimerComplete();
-
-
+	UStaticMeshComponent* DisguiseMeshComponent;
 
 };

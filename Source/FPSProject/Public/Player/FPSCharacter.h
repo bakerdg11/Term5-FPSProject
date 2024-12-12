@@ -24,6 +24,8 @@ public:
 	// Sets default values for this character's properties
 	AFPSCharacter();
 
+
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -104,10 +106,11 @@ private:
 protected:
 	void AttemptStealthKill();
 
+	/*
 	AEnemyAIController* GetValidEnemyForStealthKill() const;
 
 	void DebugStealthKill(FVector EnemyLocation, FVector PlayerLocation, bool IsBehind, bool IsClose);
-
+	*/
 
 
 };

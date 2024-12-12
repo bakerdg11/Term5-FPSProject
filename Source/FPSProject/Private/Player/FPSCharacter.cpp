@@ -53,8 +53,6 @@ void AFPSCharacter::BeginPlay() // Only called when the game begins, not when ed
 
 	bHasWeapon = false;
 
-
-
 }
 
 
