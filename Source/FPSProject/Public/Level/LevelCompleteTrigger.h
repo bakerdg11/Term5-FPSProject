@@ -3,21 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Collectibles/Collectible.h"
-#include "Kismet/GameplayStatics.h"
-#include "Player/FPSCharacter.h"
-#include "HUD/FPSHUD.h"
 #include "GameFramework/Actor.h"
-#include "Disguise.generated.h"
+#include "Components/BoxComponent.h"
+#include "LevelCompleteTrigger.generated.h"
 
 UCLASS()
-class FPSPROJECT_API ADisguise : public ACollectible
+class FPSPROJECT_API ALevelCompleteTrigger : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ADisguise();
+	ALevelCompleteTrigger();
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,15 +24,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void OnCollect() override;
-
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* DisguiseMeshComponent;
+	UBoxComponent* CollisionComponent;
 
-	UPROPERTY(EditAnywhere)
-	float RotationRate = 100;
-
-	FTimerHandle DeathTimerHandle;
-	void DeathTimerComplete();
+	UFUNCTION()
+	void BeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

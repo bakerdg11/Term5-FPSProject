@@ -13,7 +13,7 @@ ACollectible::ACollectible()
 	{
 		CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
 		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ACollectible::BeginOverlap);
-		CollisionComponent->InitSphereRadius(50.0f);
+		CollisionComponent->InitSphereRadius(100.0f);
 		RootComponent = CollisionComponent;
 	}
 }

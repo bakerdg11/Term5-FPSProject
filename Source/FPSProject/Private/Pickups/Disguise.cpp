@@ -29,6 +29,7 @@ void ADisguise::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AddActorLocalRotation(FRotator(0, RotationRate * DeltaTime, 0));
 }
 
 
@@ -58,5 +59,9 @@ void ADisguise::OnCollect()
 
 	// Destroy the disguise object
 	Destroy();
+}
+
+void ADisguise::DeathTimerComplete()
+{
 }
 

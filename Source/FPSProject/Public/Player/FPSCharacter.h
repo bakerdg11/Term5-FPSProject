@@ -88,7 +88,7 @@ public:
 
 	UFUNCTION()
 	void StartCrouch();
-
+	
 	UFUNCTION()
 	void StopCrouch();
 
@@ -114,6 +114,7 @@ public:
 	// Sets the disguised state
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
 	void SetDisguised(bool bDisguised);
+
 
 private:
 	// Tracks if the player is disguised

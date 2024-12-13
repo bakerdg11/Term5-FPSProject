@@ -35,7 +35,7 @@ public:
 	float Points = 1;
 
 	UPROPERTY(EditAnywhere)
-	float RotationRate = 100;
+	float RotationRate = 200;
 
 	UPROPERTY(EditAnywhere)
 	float OnCollectRotationRate = 1500;
