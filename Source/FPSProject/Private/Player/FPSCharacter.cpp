@@ -187,8 +187,6 @@ void AFPSCharacter::Fire()
 
 	FVector LaunchDirection = MuzzleRotation.Vector();
 	Projectile->FireInDirection(LaunchDirection);
-
-	Damage(10);
 }
 
 void AFPSCharacter::StealthKill()
@@ -242,6 +240,22 @@ void AFPSCharacter::Damage(float damageAmt)
 	float HealthPercent = Health / MaxHealth;
 
 	HUD->gameWidgetContainer->SetHealthBar(HealthPercent);
+
+	// Check if health is less than or equal to 0
+	if (Health <= 0)
+	{
+		// Call the Game Over menu
+		// Assuming you have a method in your HUD to show the Game Over menu
+		HUD->ShowGameOverMenu();
+	}
+}
+
+float AFPSCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	Damage(FinalDamage);
+
+	return FinalDamage;
 }
 
 
@@ -279,6 +293,11 @@ void AFPSCharacter::AttemptStealthKill()
 		UE_LOG(LogTemp, Warning, TEXT("Stealth kill executed on %s!"), *EnemyCharacter->GetName());
 		EnemyCharacter->Destroy();
 
+		AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+		if (!HUD) return;
+
+		HUD->gameWidgetContainer->SetKillsText(Points);
+
 		// Optionally, break after killing one enemy
 		break;
 	}
@@ -296,15 +315,17 @@ void AFPSCharacter::SetDisguised(bool bDisguised)
 
 
 
-
-
-
-/*
-float AFPSCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+bool AFPSCharacter::IntelIsAcquired() const
 {
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	return FinalDamage;
+	return bIntelIsAcquired;
 }
 
-*/
+void AFPSCharacter::SetIntelAcquired(bool bIntelAcquired)
+{
+	bIntelIsAcquired = bIntelAcquired;
+	UE_LOG(LogTemp, Warning, TEXT("Disguised Boolean set to %s"), bIntelAcquired ? TEXT("true") : TEXT("false"));
+}
+
+
+
+

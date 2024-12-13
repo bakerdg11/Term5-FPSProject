@@ -104,6 +104,12 @@ void AFPSProjectile::OnHitEnemy(UPrimitiveComponent* HitComponent, AActor* Other
             UE_LOG(LogTemp, Warning, TEXT("Projectile hit enemy"));
             HitEnemy->Destroy(); // Destroy the enemy
             Destroy(); // Destroy the projectile
+
+            AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+            if (!HUD) return;
+
+            HUD->gameWidgetContainer->SetKillsText(Points);
+
         }
     }
 }

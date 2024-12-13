@@ -86,6 +86,9 @@ public:
 	UFUNCTION()
 	void StealthKill();
 
+	UPROPERTY(EditAnywhere)
+	float Points = 1;
+
 	UFUNCTION()
 	void StartCrouch();
 	
@@ -94,7 +97,7 @@ public:
 
 	UFUNCTION()
 	void Damage(float damageAmt);
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 
 private:
@@ -121,11 +124,22 @@ private:
 	bool bIsDisguised = false;
 
 
-	/*
-	AEnemyAIController* GetValidEnemyForStealthKill() const;
+public:
+		// Returns whether the player is disguised
+		UFUNCTION(BlueprintCallable, Category = "PlayerState")
+		bool IntelIsAcquired() const;
 
-	void DebugStealthKill(FVector EnemyLocation, FVector PlayerLocation, bool IsBehind, bool IsClose);
-	*/
+		// Sets the disguised state
+		UFUNCTION(BlueprintCallable, Category = "PlayerState")
+		void SetIntelAcquired(bool bIntelAcquired);
+
+
+private:
+	// Tracks if the player is disguised
+	bool bIntelIsAcquired = false;
+
+
+
 
 
 };

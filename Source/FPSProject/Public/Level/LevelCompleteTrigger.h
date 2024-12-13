@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "HUD/FPSHUD.h"
+#include "Player/FPSCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "LevelCompleteTrigger.generated.h"
 
 UCLASS()

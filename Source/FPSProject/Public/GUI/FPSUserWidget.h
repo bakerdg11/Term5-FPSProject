@@ -27,6 +27,9 @@ public:
 	UProgressBar* HealthBar;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* IntelText;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DisguisedText;
 
 	UPROPERTY(meta = (BindWidget))
@@ -37,6 +40,9 @@ public:
 
 	UFUNCTION()
 	void SetDisguisedText(bool bIsDisguised);
+
+	UFUNCTION()
+	void SetIntelText(bool bIntelAcquired);
 
 	UFUNCTION()
 	void SetKillsText(int amount);

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Collectibles/Collectible.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/FPSCharacter.h"
 #include "HUD/FPSHUD.h"
 #include "Intel.generated.h"
 
@@ -30,9 +31,6 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* IntelMeshComponent;
-
-	UPROPERTY(EditAnywhere)
-	float Points = 1;
 
 	UPROPERTY(EditAnywhere)
 	float RotationRate = 200;

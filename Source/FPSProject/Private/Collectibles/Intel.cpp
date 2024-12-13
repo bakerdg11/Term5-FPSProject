@@ -35,24 +35,41 @@ void AIntel::Tick(float DeltaTime)
 
 void AIntel::OnCollect()
 {
-	Super::OnCollect();
+    // Call the base class implementation, if any
+    Super::OnCollect();
 
-	UE_LOG(LogTemp, Warning, TEXT("INTEL Collect Calledd"));
+    // Log to confirm the function was called
+    UE_LOG(LogTemp, Warning, TEXT("INTEL Collect Called"));
 
-	RotationRate = OnCollectRotationRate;
+    // Update rotation rate for visual feedback
+    RotationRate = OnCollectRotationRate;
 
-	//C++ version of delay node
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AIntel::DeathTimerComplete, 0.5f, false);
+    // Set a timer to handle the delayed destruction or any other effect
+    GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AIntel::DeathTimerComplete, 0.5f, false);
 
+    // Attempt to get the player character
+    AFPSCharacter* Player = Cast<AFPSCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+    if (Player)
+    {
+        // Update the player's state to indicate intel is acquired
+        Player->SetIntelAcquired(true);
+
+        // Access the HUD through the player controller
+        AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
+        if (HUD)
+        {
+            // Get the user widget attached to the HUD
+            UFPSUserWidget* UserWidget = HUD->GetUserWidget();
+            if (UserWidget && UserWidget->IntelText)
+            {
+                // Update the intel text on the UI
+                UserWidget->SetIntelText(true);
+            }
+        }
+    }
 }
 
 void AIntel::DeathTimerComplete()
 {
-	AFPSHUD* HUD = UGameplayStatics::GetPlayerController(this, 0)->GetHUD<AFPSHUD>();
-	if (!HUD) return;
-
-	HUD->gameWidgetContainer->SetKillsText(Points);
-
 	Destroy();
-
 }

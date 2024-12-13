@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "GUI/Slate/SSettingsWidget.h"
+#include "GUI/Slate/SSGameOverMenuWidget.h"
+#include "GUI/Slate/SSGameCompleteMenuWidget.h"
 #include "Engine/Canvas.h"
 #include "GUI/FPSUserWidget.h"
 #include "FPSHUD.generated.h"
@@ -28,12 +30,22 @@ public:
 	TSharedPtr<class SWidget> mainMenuWidgetContainer;
 	TSharedPtr<class SSettingsWidget> settingsWidget;
 	TSharedPtr<class SWidget> settingsWidgetContainer;
+	TSharedPtr<class SSGameOverMenuWidget> gameOverMenuWidget;
+	TSharedPtr<class SWidget> gameOverMenuWidgetContainer;
+	TSharedPtr<class SSGameCompleteMenuWidget> gameCompleteMenuWidget;
+	TSharedPtr<class SWidget> gameCompleteMenuWidgetContainer;
 
 	void ShowMainMenu();
 	void RemoveMainMenu();
 
 	void ShowSettingsMenu();
 	void RemoveSettingsMenu();
+
+	void ShowGameOverMenu();
+	void RemoveGameOverMenu();
+
+	void ShowGameCompleteMenu();
+	void RemoveGameCompleteMenu();
 
 	// 3. UMG method of making UI
 	UPROPERTY(EditAnywhere)
@@ -44,6 +56,9 @@ public:
 
 	void ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget);
 	UFPSUserWidget* GetUserWidget() const;
+
+public:
+	void RemoveGameMenu();
 
 protected:
 	UPROPERTY(EditDefaultsOnly) // Uproperty allows you to not have to delete pointers once they are removed

@@ -28,6 +28,14 @@ void UFPSUserWidget::SetDisguisedText(bool bIsDisguised)
 	DisguisedText->SetText(FText::FromString("Disguised: " + DisguisedState));
 }
 
+void UFPSUserWidget::SetIntelText(bool bIntelAcquired)
+{
+	if (!IntelText) return;
+
+	FString IntelState = bIntelAcquired ? "Yes" : "No";
+	IntelText->SetText(FText::FromString("Intel Acquired: " + IntelState));
+}
+
 void UFPSUserWidget::SetKillsText(int amount)
 {
 	if (!KillsText) return;

@@ -103,6 +103,68 @@ void AFPSHUD::RemoveSettingsMenu()
 	}
 }
 
+void AFPSHUD::ShowGameOverMenu()
+{
+	RemoveGameMenu();
+	if (GEngine && GEngine->GameViewport)
+	{
+		gameOverMenuWidget = SNew(SSGameOverMenuWidget).OwningHUD(this);
+		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(gameOverMenuWidgetContainer, SWeakWidget).PossiblyNullContent(gameOverMenuWidget.ToSharedRef()));
+
+		if (PlayerOwner)
+		{
+			PlayerOwner->bShowMouseCursor = true;
+			PlayerOwner->SetInputMode(FInputModeUIOnly());
+		}
+	}
+}
+
+void AFPSHUD::RemoveGameOverMenu()
+{
+	if (gameOverMenuWidgetContainer.IsValid())
+	{
+		GEngine->GameViewport->RemoveViewportWidgetContent(gameOverMenuWidgetContainer.ToSharedRef());
+		gameOverMenuWidgetContainer = nullptr;  // Nullify the reference
+	}
+
+	if (PlayerOwner)
+	{
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+}
+
+void AFPSHUD::ShowGameCompleteMenu()
+{
+	RemoveGameMenu();
+	if (GEngine && GEngine->GameViewport)
+	{
+		gameCompleteMenuWidget = SNew(SSGameCompleteMenuWidget).OwningHUD(this);
+		GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(gameCompleteMenuWidgetContainer, SWeakWidget).PossiblyNullContent(gameCompleteMenuWidget.ToSharedRef()));
+
+		if (PlayerOwner)
+		{
+			PlayerOwner->bShowMouseCursor = true;
+			PlayerOwner->SetInputMode(FInputModeUIOnly());
+		}
+	}
+}
+
+void AFPSHUD::RemoveGameCompleteMenu()
+{
+	if (gameCompleteMenuWidgetContainer.IsValid())
+	{
+		GEngine->GameViewport->RemoveViewportWidgetContent(gameCompleteMenuWidgetContainer.ToSharedRef());
+		gameCompleteMenuWidgetContainer = nullptr;  // Nullify the reference
+	}
+
+	if (PlayerOwner)
+	{
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+}
+
 // HUD
 void AFPSHUD::ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget)
 {
@@ -119,7 +181,19 @@ void AFPSHUD::ShowGameMenu(TSubclassOf<UFPSUserWidget> newGameWidget)
 	}
 }
 
+void AFPSHUD::RemoveGameMenu()
+{
+	// Only remove if gameWidgetContainer is valid and non-null
+	if (gameWidgetContainer)
+	{
+		gameWidgetContainer->RemoveFromViewport();
+	}
+}
+
+
 UFPSUserWidget* AFPSHUD::GetUserWidget() const
 {
 	return gameWidgetContainer;
 }
+
+
